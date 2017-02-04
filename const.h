@@ -1,4 +1,4 @@
-#define VERSION 1.3
+#define VERSION 0.9
 
 #define RED "\x1b[31m"
 #define GREEN "\x1b[32m"

@@ -16,6 +16,7 @@
 */
 
 void cursor_null();
+void set_cursor(int row,int col);
 void display_status(char *word,int cnt_err,int cnt_good);
 
 int main(int argc,char *argv[]){
@@ -132,6 +133,7 @@ int main(int argc,char *argv[]){
 		gc = 0;
 
 		/* Разнацветноя статистика ошибок	*/
+		set_cursor(26,0);
 		clr = (err > (tf/3)*2) ? RED : (err > (tf/3)) ? YELLOW : GREEN;
 		printf("Error:[%s%i/%i%s]\n",clr,err,tf,DEFAULT);
 		printf("Word: %s\n",line);
@@ -148,7 +150,8 @@ int main(int argc,char *argv[]){
 		for(int i = 0;i < (strlen(input)-1);i++){
 			/*	 Если мы уже вводили эту букву (повтор цикла)	*/
 			if(input[i] == input[n]){
-				printf("\n%sChars repeat ['%c']!%s\n\n",YELLOW,input[n],DEFAULT);
+				set_cursor(26,20);
+				printf("%sChars repeat ['%c']!%s",YELLOW,input[n],DEFAULT);
 				FLAGS.REPEAT = TRUE;
 			}
 		}
@@ -175,18 +178,21 @@ int main(int argc,char *argv[]){
 
 		/*	Вывод изображения (блочный вывод)*/
 		if(FLAGS.IMG){
+			set_cursor(0,0);
 			fread(buf,sizeof(char),BUFSIZE,fd[err]);
 			printf("%s\n\n",buf);
 		}
 
+		// display hints
 		if(err == (tf/2)){
 			if(FLAGS.HINT){
+				set_cursor(30,0);
 				printf("Hint: %s\n",hint);
 				FLAGS.HINT = FALSE;
 			}
 		}
 
-		cursor_null();
+		//cursor_null();
 		n++;
 
 	}while(good < strlen(word));
@@ -215,6 +221,10 @@ int main(int argc,char *argv[]){
 	close_file(fd,tf,FLAGS.DEBUG);
 	return 0;
 
+}
+
+void set_cursor(int row,int col){
+	printf("\033[%i;%iH",row,col);
 }
 
 void display_status(char *word,int cnt_err,int cnt_good){
